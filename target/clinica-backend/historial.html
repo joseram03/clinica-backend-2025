@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Historial de Fichas Clínicas</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav>
+    <a href="index.html">Log Out</a> |
+    <a href="pacientes.html">Pacientes</a> |
+    <a href="fichas.html">Nueva Ficha</a> |
+    <a href="historial.html">Historial</a> |
+    <a href="medicos.html">Médicos</a>
+</nav>
+<hr>
+
+<h2>Historial de Fichas Clínicas</h2>
+
+<form id="filtroForm">
+    <input type="text" id="texto" placeholder="Buscar por motivo, diagnóstico o tratamiento"><br>
+    <select id="pacienteId">
+        <option value="">Seleccionar paciente (opcional)</option>
+    </select>
+    <select id="medicoId">
+        <option value="">Seleccionar médico (opcional)</option>
+    </select>
+    <input type="text" id="especialidad" placeholder="Especialidad (opcional)"><br>
+    <button type="submit">Buscar</button>
+</form>
+
+<ul id="resultados"></ul>
+
+<script>
+    function cargarSelect(url, selectId) {
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                const select = document.getElementById(selectId);
+                data.forEach(item => {
+                    const opt = document.createElement('option');
+                    opt.value = item.id;
+                    opt.textContent = item.nombre + " " + item.apellido;
+                    select.appendChild(opt);
+                });
+            });
+    }
+
+    window.onload = function () {
+        cargarSelect('http://localhost:8080/clinica-backend/api/pacientes', 'pacienteId');
+        cargarSelect('http://localhost:8080/clinica-backend/api/medicos', 'medicoId');
+    };
+
+    document.getElementById('filtroForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const params = new URLSearchParams();
+        const texto = document.getElementById('texto').value;
+        const pacienteId = document.getElementById('pacienteId').value;
+        const medicoId = document.getElementById('medicoId').value;
+        const especialidad = document.getElementById('especialidad').value;
+
+        if (texto) params.append('texto', texto);
+        if (pacienteId) params.append('pacienteId', pacienteId);
+        if (medicoId) params.append('medicoId', medicoId);
+        if (especialidad) params.append('especialidad', especialidad);
+
+        fetch('http://localhost:8080/clinica-backend/api/fichas/filtrar?' + params.toString())
+            .then(res => res.json())
+            .then(data => {
+                const lista = document.getElementById('resultados');
+                lista.innerHTML = '';
+                if (data.length === 0) {
+                    lista.innerHTML = '<li>No se encontraron resultados.</li>';
+                    return;
+                }
+                data.forEach(f => {
+                    const item = document.createElement('li');
+                    item.textContent = `[${f.fecha}] ${f.paciente.nombre} ${f.paciente.apellido} - ${f.motivoConsulta} → ${f.diagnostico} (${f.tratamiento})`;
+                    lista.appendChild(item);
+                });
+            });
+    });
+</script>
+</body>
+</html>

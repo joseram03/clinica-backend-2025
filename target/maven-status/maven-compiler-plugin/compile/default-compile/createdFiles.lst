@@ -1,0 +1,10 @@
+com\clinica\resource\FichaClinicaResource.class
+com\clinica\resource\MedicoResource.class
+com\clinica\resource\PacienteResource.class
+com\clinica\service\FichaClinicaService.class
+com\clinica\model\Paciente.class
+com\clinica\service\PacienteService.class
+com\clinica\service\MedicoService.class
+com\clinica\model\FichaClinica.class
+com\clinica\model\Medico.class
+com\clinica\resource\ApplicationConfig.class

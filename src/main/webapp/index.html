@@ -1,0 +1,48 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Login Médico</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h2>Login Médico</h2>
+    <form id="loginForm">
+        <label>Usuario: <input type="text" id="username" required></label><br>
+        <label>Contraseña: <input type="password" id="password" required></label><br>
+        <button type="submit">Ingresar</button>
+    </form>
+    <div id="resultado"></div>
+
+    <script>
+        const form = document.getElementById('loginForm');
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            fetch('http://localhost:8080/clinica-backend/api/medicos/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    username: document.getElementById('username').value,
+                    password: document.getElementById('password').value
+                })
+            })
+            .then(response => {
+                if (!response.ok) throw new Error("Credenciales inválidas");
+                return response.json();
+            })
+            .then(data => {
+                // Guardar nombre en localStorage si querés usarlo después
+                localStorage.setItem("medicoNombre", data.nombre + " " + data.apellido);
+
+                // Redireccionar al menú principal o pacientes
+                window.location.href = "pacientes.html";
+            })
+            .catch(error => {
+                document.getElementById('resultado').innerText = error.message;
+            });
+        });
+    </script>
+</body>
+</html>

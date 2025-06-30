@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registro de Médicos</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav>
+  <a href="index.html">Log Out</a> |
+  <a href="pacientes.html">Pacientes</a> |
+  <a href="fichas.html">Nueva Ficha</a> |
+  <a href="historial.html">Historial</a> |
+  <a href="medicos.html">Médicos</a>
+</nav>
+<hr>
+
+<h2>Registrar nuevo médico</h2>
+
+<form id="medicoForm">
+  <input type="text" id="nombre" placeholder="Nombre" required><br>
+  <input type="text" id="apellido" placeholder="Apellido" required><br>
+  <input type="text" id="cedula" placeholder="Cédula" required><br>
+  <input type="email" id="email" placeholder="Email" required><br>
+  <input type="text" id="telefono" placeholder="Teléfono" required><br>
+  <input type="date" id="fechaNacimiento" required><br>
+  <input type="text" id="especialidad" placeholder="Especialidad" required><br>
+  <input type="text" id="username" placeholder="Usuario" required><br>
+  <input type="password" id="password" placeholder="Contraseña" required><br>
+  <button type="submit">Registrar Médico</button>
+</form>
+
+<div id="mensaje"></div>
+
+<script>
+  document.getElementById('medicoForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const medico = {
+      nombre: document.getElementById('nombre').value,
+      apellido: document.getElementById('apellido').value,
+      cedula: document.getElementById('cedula').value,
+      email: document.getElementById('email').value,
+      telefono: document.getElementById('telefono').value,
+      fechaNacimiento: document.getElementById('fechaNacimiento').value,
+      especialidad: document.getElementById('especialidad').value,
+      username: document.getElementById('username').value,
+      password: document.getElementById('password').value
+    };
+
+    fetch('http://localhost:8080/clinica-backend/api/medicos/crear', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(medico)
+    }).then(res => {
+      if (res.ok) {
+        document.getElementById('mensaje').innerText = "Médico creado correctamente.";
+        document.getElementById('medicoForm').reset();
+      } else {
+        document.getElementById('mensaje').innerText = "Error al crear médico.";
+      }
+    });
+  });
+</script>
+</body>
+</html>
